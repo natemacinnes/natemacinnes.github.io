@@ -1,4 +1,4 @@
-Setting up a Shopify app with Rails 5.1, Webpack, React, and Polaris
+Setting up a Shopify App with Rails 5.1, Webpack, React, and Polaris
 ======================================================
 
 Assumptions:
@@ -34,19 +34,17 @@ To use some of Shopify’s features such as Application Proxy and Webhooks you�
 
 \*\* the -subdomain argument is a premium feature but makes Shopify development MUCH easier. Highly recommend the upgrade
 
-`ngrok http -subdomain=shopifyappdemo`
+`ngrok http -subdomain=nathan-dev`
 
-We’ll now be able use the “https://shopifyappdemo.ngrok.io” to access our app.
+We’ll now be able use the “https://nathan-dev.ngrok.io” to access our app.
 
 ### 3. Shopify Partner Accounts & App Creation
 
 Next let’s head over to [https://www.shopify.com/partners](https://www.shopify.com/partners) and login or set up an account. This will allow us to create and sell apps as well as set up development stores.
 
-![](https://cdn-images-1.medium.com/max/1600/1*hEm8KtgkiywzhBJ4BlTdmA.png)
-
 Click on the create app button in the app page of your dashboard. Use ngrok url that we generated earlier.
 
-Now head to the app info tab and change the Whitelisted redirection URL to “https://shopifyappdemo.ngrok.io/auth/shopify/callback”.
+Now head to the app info tab and change the Whitelisted redirection URL to “https://nathan-dev.ngrok.io/auth/shopify/callback”.
 
 Then go to the extensions tab and make sure “Embed in Shopify admin” is enabled.
 
@@ -133,6 +131,7 @@ If you are missing the webpacker elements for React, run,
 
 When we set up the app with webpacker it generated some basic React components. Let’s modify one to use some Polaris components
 
+{% raw %}
 ```
 # app/javascript/packs/hello_react.jsx
 
@@ -171,6 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
 ReactDOM.render(<Hello {...data} />, node)  
 })
 ```
+{% endraw %}
 
 Now lets add this component to our app’s layout file by adding the following in the head tags
 
@@ -180,6 +180,7 @@ Now lets add this component to our app’s layout file by adding the following i
 
 Then add the the component to the `views/home/index.html.erb` file
 
+{% raw %}
 ```
 <% content_for :javascript do %>  
   <script type="text/javascript">  
@@ -201,6 +202,7 @@ Then add the the component to the `views/home/index.html.erb` file
 }.to_json do %>  
 <% end %>
 ```
+{% endraw %}
 
 Make sure to remove this line or add a favicon in your assets folder,
 
