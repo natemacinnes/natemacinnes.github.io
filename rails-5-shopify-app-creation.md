@@ -5,7 +5,7 @@ Assumptions:
 
 * `Rails 5.1.4` 
 * `Ruby 2.4.3`
-* `Postgres` [Setup on Mac](#todo)
+* `Postgres` [Setup on Mac](mac-postgres-dev-setup.md)
 
 We’ll be creating an embedded app that can use Shopify’s new [Polaris components](https://polaris.shopify.com/).
 
