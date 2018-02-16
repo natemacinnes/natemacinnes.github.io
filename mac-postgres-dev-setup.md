@@ -1,4 +1,8 @@
-Setting up Postgres on macOS for Development
+---
+title: Setting Up Postgres on MacOS for Development
+---
+
+Setting Up Postgres on macOS for Development
 ==============================================
 
 This is a simple guide to help you set up a postgres database service on your
