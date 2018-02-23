@@ -153,10 +153,15 @@ VM on premise server
 
 ## EC2 - Elastic Compute Cloud
 
+Allows developers the ability to pay for only the capacity you use/need.
+
 ### Options
 
 * On Demand - allow you to pay a fixed rate by the hour (or by the second)
 * Reserved 1 to 3 year contract
+  * Standard
+  * Convertible
+  * Scheduled
 * Spot - set bid a price for instance capacity
 * Dedicated Hosts - Physical EC2 server dedicated to your use.
 
@@ -188,4 +193,43 @@ VM on premise server
 * **P**: Pictures, moving pictures, general GPU
 * **X**: X-treme memory optimized
 
-### 
+### EBS - Elastic Block Store
+
+Block based storage disks that you can attach to your EC2 instances.
+Automatically replicated for you mitigating hardware failure. (In same AZ)
+
+* General Purpose SSD (GP2)
+  * Balance of price and performance
+  * 3 IOPS per GB up to 10,000 IOPS w/ bursts up to 3000 IOPS
+* Provisioned IOPS SSD (IO1)
+  * Designed for I/O intensive applications/databases
+  * Only needed if you require over 10,000 IOPS
+  * Up to 20,000 IOPS
+* Throughput Optimized HDD (ST1)
+  * Big data, data warehousing, log processing
+  * Cannot be a boot volume
+* Cold HDD (SC1)
+  * Lowest cost for infrequently accessed data
+  * File server
+  * Cannot be a boot volume
+* Magnetic (Standard)
+  * Lowest storage cost per GB of all EBS volume types that are bootable
+
+### Need to Know
+
+* The difference between:
+  * On demand
+  * Spot
+  * Reserved
+  * Dedicated Hosts
+* Sport instances:
+  * If you terminate, you pay for the hour.
+  * If AWS terminates the spot instance, you get the hour it was terminated for
+    free.
+* EBS types and applications
+  * You can not mount 1 EBS volume to multiple EC2 instances, use EFS instead
+    for shared storage.
+
+### EC2 Lab Tips
+
+* Use tags to reduce costs!
