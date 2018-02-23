@@ -1,0 +1,20 @@
+# Tips and Tricks
+
+A collection of little things that I have found to be useful and I don't
+want to forget.
+
+## Terminal (iTerm)
+
+### Suspend a process
+Useful when you want to check another document or run another command, but don't
+want to have to exit out of vim or close all you panes.
+
+Suspend the process,
+<kbd>control</kbd> + <kbd>z</kbd>
+
+Bring the process back to the forground,
+
+```
+% fg
+```
+

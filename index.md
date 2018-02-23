@@ -4,3 +4,4 @@ This might be useful:
 * [Setting Up postgresql on macOS for Development](mac-postgres-dev-setup)
 * [AWS Solutions Architect Associate Exam Notes](aws-solutions-architect-associate-exam-notes)
 * [SFTP Server Setup](setting-up-an-sftp-server-on-ubuntu.md)
+* [Tips & Tricks](dev-tips-and-tricks.md)
