@@ -18,3 +18,17 @@ Bring the process back to the forground,
 % fg
 ```
 
+Suspended multiple things and don't know what to do,
+
+```
+% ps
+```
+
+will list current background processes.
+Then you can use,
+
+```
+% fg 2
+```
+
+to restore the second background process.
