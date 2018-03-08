@@ -77,7 +77,7 @@ through our group.
 We still need to allow our SFTP users to write to the incoming folders,
 
 ```
-% chown sftpusers:sftpusers -R /sftp/shared/incoming/
+% chown <username>:sftpusers -R /sftp/shared/incoming/
 ```
 
 ## SSH Config and Locking Down the SFTP Users
@@ -102,7 +102,8 @@ Subsystem sftp internal-sftp
 Head to the bottom of the file and add the following lines,
 
 ```
-Match Group sftpusers ChrootDirectory /sftp
+Match Group sftpusers
+ChrootDirectory /sftp
 X11Forwarding no
 AllowTcpForwarding no
 AllowAgentForwarding no
