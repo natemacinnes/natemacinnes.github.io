@@ -1,5 +1,5 @@
 ---
-title: How To Handle schema.rb conflicts during git Rebase in Rails Projects
+title: How To Handle schema.rb Conflicts During git rebase in Rails Projects
 ---
 
 How To Handle Database Schema Conflicts in Rails When Rebasing
