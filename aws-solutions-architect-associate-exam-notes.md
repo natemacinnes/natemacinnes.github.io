@@ -233,3 +233,47 @@ Automatically replicated for you mitigating hardware failure. (In same AZ)
 ### EC2 Lab Tips
 
 * Use tags to reduce costs!
+* Cannot encrypt root volume (Default AMI), only encrypt EBS attached storage via AWS.
+* Termination protection, off by default.
+* Root EBS valume deleted when instance is terminated.
+
+### Security Groups
+
+It is a virtual firewall.
+
+#### Lab Tips
+
+* Multiple Security Groups can be assigned to resources.
+* All inbound traffic blocked by default
+* All outbound traffic allowed
+* Security Groups are **STATEFUL**
+  * Inboude rules that allow traffic in automatically allow traffic out. (state)
+  * Differs from ACL
+* Cannot not block specific IP addresses. Use ACL.
+* Cannot specify deny rules, only allow.
+
+### EBS Volumes - Lab
+
+Upgrading and downgrading EC2 EBS volumes.
+
+#### Lab Tips
+
+* EC2 instance must always be in the same availability zone as the EBS Volume.
+* You can modify gp2 on the spot without stopping the instance to IO
+* Cannot modify standard.
+* Move data to another availability zone/region -> create a snapshot -> copy snapshot to new region -> create new image on a new EBS Volume.
+* Snapshots exist on S3 (not user accessible).
+  * Incremental, only modified blocks are moved to s3.
+* Taking a snapshot of a root device can cause performance issues while
+  creating.
+* You can create AMI's from both Volumes and Snapshots.
+* Snapshots of encrypted volumes are encrypted automatically
+* Snapshots can be shared if they are unencrypted
+
+### Raid, Volumes & Snapshots
+
+* Redundant Array of Independent Disks
+  * RAID 0 - Striped, No Redundancy, Good Performance.
+  * RAID 1 - Mirrored, Redundancy
+  * RAID 5 - Good for reads, bad for writes, AWS does not recommend ever puttin    RAID 5's on EBS!
+  * RAID 10 - Striped & Mirrored, Good Redundancy, Good Performance.
