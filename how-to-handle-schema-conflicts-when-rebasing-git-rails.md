@@ -2,6 +2,8 @@
 title: How To Handle schema.rb conflicts during git Rebase in Rails Projects
 ---
 
+How To Handle Database Schema Conflicts in Rails When Rebasing
+
 ## TLDR;
 
 ### Rebuild schema.rb at each stage
@@ -101,9 +103,6 @@ generated migration.
 We can now `rebase --continue` in peace!
 
 ## Why It Happens
-To understand why the above approach works, the following insights might be
-useful:
-
 The schema file is constructed from the database, not directly from the
 migrations
 When `rake db:migrate` is run, checks a `schema_migrations` table in the database
@@ -118,4 +117,4 @@ migrations end up being run out of order, because e.g new indexes are added in
 alphabetical order, not in migration order.
 
 
-This post is heavily based on this [article](http://dgmstuart.github.io/blog/2017/04/12/how-to-recover-from-rails-database-schema-conflicts-when-rebasing/) by Duncan G M Stuart
+This post is based on this [article](http://dgmstuart.github.io/blog/2017/04/12/how-to-recover-from-rails-database-schema-conflicts-when-rebasing/) by Duncan G M Stuart
