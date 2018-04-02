@@ -5,7 +5,7 @@
 	
 	Make sure that `mode` is set to `tcp`
 
-### First Steps Nginx Confifguration
+### Nginx Configuration
 
 * `config/rubber/role/passenger_nginx/passenger_nginx.conf`
 * `config/rubber/role/passenger_nginx/nginx-tools.conf`
@@ -40,7 +40,7 @@ server {
 	...
 }
 ```
-Using the app name and domain combination for the domain name is theconvention, but if you register a differenct URL then the app name you will have to cusomize the certificate path.
+Using the app name and domain combination for the domain name is the convention, but if you register a different URL then the app name you will have to customize the certificate path.
 
 Check [Mozilla SSL Configuration Generator](https://mozilla.github.io/server-side-tls/ssl-config-generator/) for most up to date cipher configuration for the server's version of Nginx.
 
@@ -101,7 +101,7 @@ authenticator = webroot
 webroot-path = /mnt/<app_name>/current/public
 ```
 
-You need to provide your email address for recovering the certificate credentials and for if a certificate renewal should fail. (Diff: use systemintegrations@diffagency.com) Also add the domains for which you want the certificates for seperated by commas like, `example.com, www.example.com`.
+You need to provide your email address for recovering the certificate credentials and for if a certificate renewal should fail. (Diff: use systemintegrations@diffagency.com) Also add the domains for which you want the certificates for separated by commas like, `example.com, www.example.com`.
 
 ### Creating Certificate
 Finally, we are ready to create our first certificate. Execute the following commands,
@@ -125,7 +125,7 @@ $ sudo certbot certonly
 $ sudo certbot-auto certonly
 ```
 
-This command will renew the certificate. We can automate renewal by running this command as a cron job. We can make this command run once a month to renew certificates at a monthly basis. We also need to reload the nginx configurations.
+This command will renew the certificate. We can automate renewal by running this command as a cron job. We can make this command run once a month to renew certificates at a monthly basis. We also need to reload the Nginx configurations.
 
 To add a new cron job, type the following command:
 
@@ -153,7 +153,7 @@ We need generate a DHE parameter:
 
 ```
 $ cd /etc/ssl/certs
-$ openssl dhparam -out dhparam.pem 4096
+$ sudo openssl dhparam -out dhparam.pem 4096
 ```
 
 ### Activating HTTPS in the App
@@ -162,9 +162,4 @@ Simply change the line in `config/rubber/rubber-passenger_nginx.yml`:
 `use_ssl_key: true`
 
 Then redeploy the configurtion: `cap deploy`
-
-
-
-
-
 
