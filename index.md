@@ -7,3 +7,8 @@ This might be useful:
 * [Handling Schema Conflicts Rebasing in
   Rails](how-to-handle-schema-conflicts-when-rebasing-git-rails.md)
 * [Tips & Tricks](dev-tips-and-tricks.md)
+
+### Work Specific Guides
+
+* [Let's Encrypt Ubuntu and Rails Rubber
+  Configuration](rails-rubber-letsencrypt-configuration.md)
