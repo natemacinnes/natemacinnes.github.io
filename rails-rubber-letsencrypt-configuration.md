@@ -55,24 +55,25 @@ After deployment change `use_ssl_key` to `true` in `config/rubber/role/rubber-pa
 
 Do the same in `config/rubber/role/web_tools/nginx-tools.conf` if you have the role 'web tools'. (It will need to be added in two places.)
 
-Add to the second server block in `config/rubber/role/passenger_nginx/passenger_nginx.conf`
+Add the following to the second server block in `config/rubber/role/passenger_nginx/passenger_nginx.conf`,
 
-``` 
+```
 location ^~ /.well-known/ {
     allow all;
 }
-``` 
+```
 
-Add folder named `/.well-known/` to the `public` in the root application directory.
+The above snippet will allow letsencrypt verify server ownership. Webroot
+verification allows us to leave the server running during the certificate issuance process.
+
+Add a folder named `/.well-known/` to the `public` folder in the root application directory.
 
 ```
 $ mkdir public/.well_known
 ```
 
-### Installing Let’s Encrypt
+### Installing Certbot (Let's Encrypt client)
 Use SSH to log into your server as root user. 
-
-### Configuring Let's Encrypt
 
 First download and install [Certbot](https://certbot.eff.org/), [14.04](https://certbot.eff.org/lets-encrypt/ubuntutrusty-nginx),
 [12.04](https://certbot.eff.org/lets-encrypt/ubuntuother-nginx)
