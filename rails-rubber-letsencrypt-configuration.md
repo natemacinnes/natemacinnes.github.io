@@ -2,45 +2,51 @@
 
 ### Haproxy config
 * `config/rubber/role/haproxy/haproxy-passenger.conf`
-	
-	Make sure that `mode` is set to `tcp`
+
+Make sure that `mode` is set to `tcp`.
 
 ### Nginx Configuration
 
 * `config/rubber/role/passenger_nginx/passenger_nginx.conf`
 * `config/rubber/role/passenger_nginx/nginx-tools.conf`
 
-In the section below `<% if rubber_env.use_ssl_key %>` add the following, (the ssl\_protocols and ssl\_ciphers should always be updated to the most secure and up to date order possible.)
- 
+In the section inside and after the `<% if rubber_env.use_ssl_key %>` add the following, (the ssl\_protocols and ssl\_ciphers should always be updated to the most secure and up to date order possible.)
+
 ```
 server {
-	ssl on;
-	listen <%= rubber_env.passenger_listen_ssl_port %>;
+  ssl on;
+  listen <%= rubber_env.passenger_listen_ssl_port %>;
 
-	proxy_set_header X_FORWARDED_PROTO https;
+  proxy_set_header X_FORWARDED_PROTO https;
 
-    
-	# SSL certificate and key
-	ssl_certificate  /etc/letsencrypt/live/<%= #{rubber_env.app_name}.#{rubber_env.domain} %>/fullchain.pem;
-	ssl_certificate_key  /etc/letsencrypt/live/<%= #{rubber_env.app_name}.#{rubber_env.domain %>/privkey.pem;
 
-	# SSL configuration
-	ssl_session_timeout 1d;
-	ssl_session_cache shared:SSL:50m;
-	ssl_session_tickets off;
+  <% if rubber_env.use_ssl_key %>
+    # SSL certificate and key
+    ssl_certificate  /etc/letsencrypt/live/<%= #{rubber_env.app_name}.#{rubber_env.domain} %>/fullchain.pem;
+    ssl_certificate_key  /etc/letsencrypt/live/<%= #{rubber_env.app_name}.#{rubber_env.domain} %>/privkey.pem;
+  <% else %>
+    ...
+  <% end %>
 
-	# Diffie-Hellman parameter for DHE ciphersuites, recommended 2048 bits
-	ssl_dhparam /etc/ssl/certs/dhparam.pem;
+  # SSL configuration
+  ssl_session_timeout 1d;
+  ssl_session_cache shared:SSL:50m;
+  ssl_session_tickets off;
 
-	# intermediate configuration. tweak to your needs.
-	ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
-	ssl_ciphers 'ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA:ECDHE-ECDSA-DES-CBC3-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:DES-CBC3-SHA:!DSS';
-	ssl_prefer_server_ciphers on;
-	
-	...
+  # Diffie-Hellman parameter for DHE ciphersuites, recommended 2048 bits
+  ssl_dhparam /etc/ssl/certs/dhparam.pem;
+
+  # intermediate configuration. tweak to your needs.
+  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+  ssl_ciphers 'ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA:ECDHE-ECDSA-DES-CBC3-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:DES-CBC3-SHA:!DSS';
+  ssl_prefer_server_ciphers on;
+
+...
+
 }
 ```
-Using the app name and domain combination for the domain name is the convention, but if you register a different URL then the app name you will have to customize the certificate path.
+
+***Using the `rubber_env.app-name` and `rubber_env.domain` combination for the domain name is the convention, but if you register a different subdomain then the `rubber_env.app_name` you will have to customize the certificate path. For example: `rubber_env.app_name = shoprunner_integration, rubber_env.domain = bencrudo.com` and the registered domain is `shoprunner-integration.bencrudo.com`.***
 
 Check [Mozilla SSL Configuration Generator](https://mozilla.github.io/server-side-tls/ssl-config-generator/) for most up to date cipher configuration for the server's version of Nginx.
 
@@ -98,7 +104,7 @@ rsa-key-size = 4096
 email = <your-email>
 domains = <domains>
 authenticator = webroot
-webroot-path = /mnt/<app_name>/current/public
+webroot-path = /mnt/<app_name>-<environment>/current/public
 ```
 
 You need to provide your email address for recovering the certificate credentials and for if a certificate renewal should fail. (Diff: use systemintegrations@diffagency.com) Also add the domains for which you want the certificates for separated by commas like, `example.com, www.example.com`.
@@ -107,6 +113,7 @@ You need to provide your email address for recovering the certificate credential
 Finally, we are ready to create our first certificate. Execute the following commands,
 
 ```
+# Use the command corresponding to your ubuntu version
 # Ubuntu > 14.04
 $ sudo certbot certonly
 # Ubuntu < 14.0.4
@@ -119,6 +126,7 @@ This creates the SSL certificates in `/etc/letsencrypt/live/<domain-name>/` fold
 Let’s Encrypt certificates are valid for 90 days, so we need to renew them. To renew, you just have to run the client with `renew` command,
 
 ```
+# Use the command corresponding to your ubuntu version
 # Ubuntu > 14.04
 $ sudo certbot certonly
 # Ubuntu < 14.0.4
@@ -127,11 +135,11 @@ $ sudo certbot-auto certonly
 
 This command will renew the certificate. We can automate renewal by running this command as a cron job. We can make this command run once a month to renew certificates at a monthly basis. We also need to reload the Nginx configurations.
 
-To add a new cron job, type the following command:
+To add a new cron job, type the following command,
 
 `sudo crontab -e`
 
-Add the following lines to the end of the cron file:
+Add one of the lines below corresponding to the server Ubuntu version,
 
 ```
 SHELL=/bin/bash
@@ -139,6 +147,7 @@ HOME=/
 MAILTO=”example@mail.com”
 
 ...
+
 # Ubuntu > 14.04
 0 4 * * * (certbot renew --post-hook "service nginx reload") >> /var/log/letsencrypt.log
 
@@ -146,7 +155,7 @@ MAILTO=”example@mail.com”
 0 4 * * * (/etc/letsencrypt/certbot-auto renew --post-hook "service nginx reload") >> /var/log/letsencrypt.log
 ```
 
-This will cause the command to run at 4:00AM everyday. The cert will only be renewed if there is less then 30 days remain The command to restart Nginx in the `--post_hook` flag will  only run when the cert is renewed. Command The output of this command is stored in `/var/log/letsencrypt.log`.
+This will cause the command to run at 4:00AM everyday. The cert will only be renewed if there is less then 30 days remain. The command to restart Nginx in the `--post_hook` flag will  only run when the cert is renewed. Command The output of this command is stored in `/var/log/letsencrypt.log`.
 
 ### Adding Forward Secrecy & Diffie Hellman Ephemeral Parameters
 We need generate a DHE parameter:
