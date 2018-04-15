@@ -1,10 +1,34 @@
 ## Let's Encrypt in Rails with Capistrano and Rubber
 
-### Haproxy config
+### Haproxy config (only required if app is NOT load balanced)
 * `config/rubber/role/haproxy/haproxy-passenger.conf`
 
 Make sure that `mode` is set to `tcp`.
+### Rubber config
 
+* `config/application.eyml`
+
+Add app_url corresponding to your deployed environments (staging, production)
+
+```
+# Staging
+staging:
+  app_url: staging-app.diffagency.com
+...
+
+# Production
+production:
+  app_url: app.diffagency.com
+...
+```
+
+* `config/rubber/rubber.yml`
+
+Add a rubber environment variable near the top of the file.
+
+```
+app_url: "#{app_url}"
+```
 ### Nginx Configuration
 
 * `config/rubber/role/passenger_nginx/passenger_nginx.conf`
@@ -22,8 +46,8 @@ server {
 
   <% if rubber_env.use_ssl_key %>
     # SSL certificate and key
-    ssl_certificate  /etc/letsencrypt/live/<%= #{rubber_env.app_name}.#{rubber_env.domain} %>/fullchain.pem;
-    ssl_certificate_key  /etc/letsencrypt/live/<%= #{rubber_env.app_name}.#{rubber_env.domain} %>/privkey.pem;
+    ssl_certificate  /etc/letsencrypt/live/<%= #{rubber_env.app_url} %>/fullchain.pem;
+    ssl_certificate_key  /etc/letsencrypt/live/<%= #{rubber_env.app_url} %>/privkey.pem;
   <% else %>
     ...
   <% end %>
@@ -36,7 +60,7 @@ server {
   # Diffie-Hellman parameter for DHE ciphersuites, recommended 2048 bits
   ssl_dhparam /etc/ssl/certs/dhparam.pem;
 
-  # intermediate configuration. tweak to your needs.
+  # Visit https://mozilla.github.io/server-side-tls/ssl-config-generator/ for up to date cipher configuration
   ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
   ssl_ciphers 'ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA:ECDHE-ECDSA-DES-CBC3-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:DES-CBC3-SHA:!DSS';
   ssl_prefer_server_ciphers on;
@@ -46,9 +70,7 @@ server {
 }
 ```
 
-***Using the `rubber_env.app-name` and `rubber_env.domain` combination for the domain name is the convention, but if you register a different subdomain then the `rubber_env.app_name` you will have to customize the certificate path. For example: `rubber_env.app_name = shoprunner_integration, rubber_env.domain = bencrudo.com` and the registered domain is `shoprunner-integration.bencrudo.com`.***
-
-Check [Mozilla SSL Configuration Generator](https://mozilla.github.io/server-side-tls/ssl-config-generator/) for most up to date cipher configuration for the server's version of Nginx.
+> Check [Mozilla SSL Configuration Generator](https://mozilla.github.io/server-side-tls/ssl-config-generator/) for most up to date cipher configuration for the server's version of Nginx.
 
 The first deployment you will need to ensure https is off to allow connections through http.
 After deployment change `use_ssl_key` to `true` in `config/rubber/role/rubber-passenger_nginx.yml`
@@ -100,6 +122,10 @@ $ sudo chmod a+x certbot-auto
 #### Configuration
 The configuration needed to create the certificates are put in a file named `cli.ini` inside `/etc/letsencrypt/`,
 
+> ##### Note:
+> The webroot-path needs to be your app path, for old deployments, it is found at
+> `/mnt/` and for new deployments it is found at `/srv/`.
+
 ```
 rsa-key-size = 4096
 email = <your-email>
@@ -117,7 +143,7 @@ Finally, we are ready to create our first certificate. Execute the following com
 # Use the command corresponding to your ubuntu version
 # Ubuntu > 14.04
 $ sudo certbot certonly
-# Ubuntu < 14.0.4
+# Ubuntu < 14.04
 $ sudo certbot-auto certonly
 ```
 
@@ -126,15 +152,7 @@ This creates the SSL certificates in `/etc/letsencrypt/live/<domain-name>/` fold
 ### Automating Certificate Renewal
 Let’s Encrypt certificates are valid for 90 days, so we need to renew them. To renew, you just have to run the client with `renew` command,
 
-```
-# Use the command corresponding to your ubuntu version
-# Ubuntu > 14.04
-$ sudo certbot certonly
-# Ubuntu < 14.0.4
-$ sudo certbot-auto certonly
-```
-
-This command will renew the certificate. We can automate renewal by running this command as a cron job. We can make this command run once a month to renew certificates at a monthly basis. We also need to reload the Nginx configurations.
+We can automate renewal by running this command as a cron job. We can make this command run once a month to renew certificates at a monthly basis. We also need to reload the Nginx configurations.
 
 To add a new cron job, type the following command,
 
