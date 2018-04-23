@@ -97,8 +97,21 @@ $ mkdir public/.well_known
 ### Installing Certbot (Let's Encrypt client)
 Use SSH to log into your server as root user. 
 
-First download and install [Certbot](https://certbot.eff.org/), [14.04](https://certbot.eff.org/lets-encrypt/ubuntutrusty-nginx),
+First, check your Ubuntu version,
+
+```
+& lsb_release -a
+
+No LSB modules are available.
+Distributor ID: Ubuntu
+Description:    Ubuntu 12.04.5 LTS
+Release:        12.04
+Codename:       precise
+```
+
+Next, download and install [Certbot](https://certbot.eff.org/), [14.04](https://certbot.eff.org/lets-encrypt/ubuntutrusty-nginx),
 [12.04](https://certbot.eff.org/lets-encrypt/ubuntuother-nginx)
+
 
 #### Ubuntu > 14.04 and Nginx
 ```
@@ -144,7 +157,7 @@ Finally, we are ready to create our first certificate. Execute the following com
 # Ubuntu > 14.04
 $ sudo certbot certonly
 # Ubuntu < 14.04
-$ sudo certbot-auto certonly
+$ sudo /etc/letsencrypt/certbot-auto certonly
 ```
 
 This creates the SSL certificates in `/etc/letsencrypt/live/<domain-name>/` folder. Whenever we renew the certificates, the latest will be found in this folder.
