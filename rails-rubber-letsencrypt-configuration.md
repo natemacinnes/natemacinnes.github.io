@@ -91,7 +91,7 @@ verification allows us to leave the server running during the certificate issuan
 Add a folder named `/.well-known/` to the `public` folder in the root application directory.
 
 ```
-$ mkdir public/.well_known
+$ mkdir public/.well-known
 ```
 
 ### Installing Certbot (Let's Encrypt client)
