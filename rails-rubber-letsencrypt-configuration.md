@@ -1,6 +1,16 @@
 ## Let's Encrypt in Rails with Capistrano and Rubber
 
+
+> NOTE: When updating multiple subdomains that correspond to individual
+> servers/apps,
+> letsencrypt has limits. You can only create 20 certificates per top level
+> domain (i.e. bencrudo.com) per week. See details
+> [here](https://letsencrypt.org/docs/rate-limits/)
+
 ### Haproxy config (only required if app is NOT load balanced)
+
+App may be configured without haproxy, most likely if using diffagency.com domain.
+
 * `config/rubber/role/haproxy/haproxy-passenger.conf`
 
 Make sure that `mode` is set to `tcp`.
@@ -46,8 +56,8 @@ server {
 
   <% if rubber_env.use_ssl_key %>
     # SSL certificate and key
-    ssl_certificate  /etc/letsencrypt/live/<%= #{rubber_env.app_url} %>/fullchain.pem;
-    ssl_certificate_key  /etc/letsencrypt/live/<%= #{rubber_env.app_url} %>/privkey.pem;
+    ssl_certificate  /etc/letsencrypt/live/<%= rubber_env.app_url %>/fullchain.pem;
+    ssl_certificate_key  /etc/letsencrypt/live/<%= rubber_env.app_url %>/privkey.pem;
   <% else %>
     ...
   <% end %>
@@ -137,7 +147,8 @@ The configuration needed to create the certificates are put in a file named `cli
 
 > ##### Note:
 > The webroot-path needs to be your app path, for old deployments, it is found at
-> `/mnt/` and for new deployments it is found at `/srv/`.
+> `/mnt/` and for new deployments it is found at `/srv/`. (`/srv`/ domain more
+> likely with diffagency.com domains.)
 
 ```
 rsa-key-size = 4096
@@ -146,6 +157,9 @@ domains = <domains>
 authenticator = webroot
 webroot-path = /mnt/<app_name>-<environment>/current/public
 ```
+
+<`domains`> correspond to the url you use to access you app, i.e.
+app.diffagency.com
 
 You need to provide your email address for recovering the certificate credentials and for if a certificate renewal should fail. (Diff: use systemintegrations@diffagency.com) Also add the domains for which you want the certificates for separated by commas like, `example.com, www.example.com`.
 
@@ -167,11 +181,8 @@ Let’s Encrypt certificates are valid for 90 days, so we need to renew them. To
 
 We can automate renewal by running this command as a cron job. We can make this command run once a month to renew certificates at a monthly basis. We also need to reload the Nginx configurations.
 
-To add a new cron job, type the following command,
-
-`sudo crontab -e`
-
-Add one of the lines below corresponding to the server Ubuntu version,
+Add one of the lines below corresponding to the server Ubuntu version to
+`config/rubber/common/crontab`
 
 ```
 SHELL=/bin/bash
@@ -202,5 +213,5 @@ Now that the app has and the server are set up for HTTPS. It is time to turn it 
 Simply change the line in `config/rubber/rubber-passenger_nginx.yml`:
 `use_ssl_key: true`
 
-Then redeploy the configurtion: `cap deploy`
+Then redeploy the configuration: `cap deploy`
 
